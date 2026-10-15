@@ -1,0 +1,7 @@
+{
+  "train_pairs": 191415,
+  "test_pairs": 11972,
+  "formula_accuracy": 0.7886735716672235,
+  "logistic_accuracy": 0.9001002338790511,
+  "gradient_boost_accuracy": 0.9401102572669562
+}
