@@ -6,7 +6,7 @@ import math
 import plotly.graph_objects as go
 import json
 import joblib
-from battle import load_battle_data, build_features
+from battle import load_battle_data, build_features, train_win_model
 
 st.set_page_config(page_title="Poké Coach", layout="wide")
 
@@ -310,7 +310,12 @@ def rank_candidates(opps, pool, n=15):
 
 @st.cache_resource
 def load_ml():
-    model = joblib.load(MODEL_PATH)
+    try:
+        model = joblib.load(MODEL_PATH)
+    except Exception:
+        # saved model was built with a different scikit-learn version
+        with st.spinner("Preparing the ML model (first run only)..."):
+            model = train_win_model()
     bdf, barr = load_battle_data(include_forms=True)
     name_to_idx = {n: i for i, n in enumerate(bdf["name"])}
     return model, barr, name_to_idx

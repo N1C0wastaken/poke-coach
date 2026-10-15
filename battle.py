@@ -88,3 +88,22 @@ def build_features(arr, i, j):
         f["a_" + c] = s[c][i]
         f["b_" + c] = s[c][j]
     return pd.DataFrame(f)
+
+def train_win_model(n_pairs=300_000, seed=42):
+    from sklearn.ensemble import HistGradientBoostingClassifier
+
+    rng = np.random.default_rng(seed)
+    df, arr = load_battle_data()
+    n = len(df)
+
+    i = rng.integers(0, n, n_pairs)
+    j = rng.integers(0, n, n_pairs)
+    keep = i != j
+    i, j = i[keep], j[keep]
+
+    win, draw = simulate(arr, i, j, rng)
+    i, j, y = i[~draw], j[~draw], win[~draw]
+
+    model = HistGradientBoostingClassifier(random_state=0)
+    model.fit(build_features(arr, i, j), y)
+    return model
